@@ -23,7 +23,7 @@ n=2 #1 for nvidia cnn, 2 for sunny cnn, 3 for edges...
 
 
 #extract data from folders.
-data_dir1 = 'C:/Users/Siokhan Kouassi/Documents/Sekf-Driving car/semester 2/MLiS2/training_data'
+data_dir1 = '../../Data'
 
 #first we extract images
 file_list = np.asarray(os.listdir(data_dir1))
@@ -42,7 +42,7 @@ labels = np.genfromtxt('training_norm.csv',delimiter = ',')
 y1 = labels[1:,1:]
 
 
-data_dir2 = 'C:/Users/Sunny/Documents/msci/semester 2/MLiS2/captureOVAL-28_02_2020'
+data_dir2 = '../../Data/captureOVAL-28_02_2020'
 x2,y2 = extract_data(data_dir2)
 x2 = np.asarray(x2)
 
