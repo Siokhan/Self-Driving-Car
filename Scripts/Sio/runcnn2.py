@@ -17,13 +17,13 @@ import csv
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 
-n=2 #1 for nvidia cnn, 2 for sunny cnn, 3 for edges...
+n=1 #1 for nvidia cnn, 2 for sunny cnn, 3 for edges...
 
 #keras.models.load_model('model1.hf')
 
 
 #extract data from folders.
-data_dir1 = '../../Data'
+data_dir1 = '../../Data/training_data/training_data'
 
 #first we extract images
 file_list = np.asarray(os.listdir(data_dir1))
@@ -37,7 +37,7 @@ for f in file_list:
 
 x1=np.asarray(x)
 #now extract labels
-labels = np.genfromtxt('training_norm.csv',delimiter = ',')
+labels = np.genfromtxt('../../Data/training_norm.csv',delimiter = ',')
 
 y1 = labels[1:,1:]
 
@@ -106,3 +106,4 @@ plt.plot(range(len(y_test)),predictions,'r*')
 plt.legend(('Labels','Predictions'),loc = 'best')
 plt.xlabel('test example number')
 plt.ylabel('angle of rotation')
+plt.show()
