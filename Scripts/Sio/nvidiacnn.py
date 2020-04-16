@@ -67,5 +67,7 @@ def nvidia_img_preprocess(imagearray):
         newimagearray[i,:,:,:]=image
     return newimagearray
 
+
+
 model = nvidia_model()
 print(model.summary())
