@@ -53,9 +53,32 @@ y2[:,0] = (y2[:,0] -50)/80
 y2[:,1] = (y2[:,1])/35
 print(y2.shape)
 
+data_dir3 = '../../Data/captureOVAL2-28_02_2020'
+x3,y3 = extract_data(data_dir3)
+x3 = np.asarray(x3)
+print(x3.shape)
+
+y3[:,0] = (y3[:,0] -50)/80
+y3[:,1] = (y3[:,1])/35
+print(y3.shape)
+
+data_dir4 = '../../Data/captureOVAL03_03_2020'
+x4,y4 = extract_data(data_dir4)
+x4 = np.asarray(x4)
+print(x4.shape)
+
+y4[:,0] = (y4[:,0] -50)/80
+y4[:,1] = (y4[:,1])/35
+print(y4.shape)
+
 x = np.append(x1,x2,axis = 0)
-y = np.append(y1,y2,axis=0)
+x = np.append(x,x3,axis = 0)
+x = np.append(x,x4,axis = 0)
 print(x.shape)
+
+y = np.append(y1,y2,axis=0)
+y = np.append(y,y3,axis=0)
+y = np.append(y,y4,axis=0)
 print(y.shape)
 
 #extract test data
@@ -120,13 +143,9 @@ print('Testing')
 accuracy = model.evaluate(x=x_valid, y=y_valid, batch_size=2)
 
 predictions_validation = model.predict(x_valid)
-predictions_test = model.predict(x_test)
-test_image_id = pd.DataFrame(test_image_id, columns = ['image_id'])
-angles = pd.DataFrame(predictions_test[:,0], columns = ['angle'])
-speeds = pd.DataFrame(predictions_test[:,1], columns = ['speed'])
-output = pd.concat([test_image_id, angles, speeds], axis = 1, sort = False)
-output.sort_values(by=['image_id'], inplace = True)
-output.to_csv('sunny-early-stopping.csv', index = False)
+
+#save the model
+model.save('sio_model2')
 
 #plt.figure()
 
