@@ -19,8 +19,8 @@ import matplotlib.image as mpimg
 
 
 #my experimental cnn model. 
-def sunny_model():
-    model = Sequential(name='Sunny_Model')
+def sio_model():
+    model = Sequential(name='Sio_model')
     
     # elu=Expenential Linear Unit, similar to leaky Relu
     # skipping 1st hiddel layer (nomralization layer), as we have normalized the data
@@ -53,11 +53,11 @@ def sunny_model():
 
 
 #from looking at the images i decided to crop top 100 pixels and normalize. 
-def sunny_img_preprocess(imagearray):
+def sio_img_preprocess(imagearray):
     imagearray=imagearray[:,100:,:,:] #crop top 100 pixels. 
     imagearray = imagearray/255 #normalize. 
     return imagearray
 
 
-model = sunny_model()
+model = sio_model()
 print(model.summary())

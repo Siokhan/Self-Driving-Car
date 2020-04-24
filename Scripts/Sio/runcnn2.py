@@ -18,7 +18,7 @@ import pandas as pd
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 
-n=2 #1 for nvidia cnn, 2 for sunny cnn, 3 for edges...
+n=2 #1 for nvidia cnn, 2 for sio cnn, 3 for edges...
 
 #keras.models.load_model('model1.hf')
 
@@ -71,14 +71,25 @@ y4[:,0] = (y4[:,0] -50)/80
 y4[:,1] = (y4[:,1])/35
 print(y4.shape)
 
+data_dir5 = '../../Data/human_stopped_data'
+x5,y5 = extract_data(data_dir5)
+x5 = np.asarray(x5)
+print(x5.shape)
+
+y5[:,0] = (y5[:,0] -50)/80
+y5[:,1] = (y5[:,1])/35
+print(y5.shape)
+
 x = np.append(x1,x2,axis = 0)
 x = np.append(x,x3,axis = 0)
 x = np.append(x,x4,axis = 0)
+x = np.append(x,x5,axis = 0)
 print(x.shape)
 
 y = np.append(y1,y2,axis=0)
 y = np.append(y,y3,axis=0)
 y = np.append(y,y4,axis=0)
+y = np.append(y,y5,axis=0)
 print(y.shape)
 
 #extract test data
@@ -103,10 +114,10 @@ if n==1: #if nvidiacnn is selected
     x_test = nvidia_img_preprocess(x_test)
     model = nvidia_model()
 elif n==2: #if sunnycnn is selected
-    from sunnycnn import sunny_model, sunny_img_preprocess
-    x = sunny_img_preprocess(x)
-    x_test = sunny_img_preprocess(x_test)
-    model = sunny_model()
+    from siocnn import sio_model, sio_img_preprocess
+    x = sio_img_preprocess(x)
+    x_test = sio_img_preprocess(x_test)
+    model = sio_model()
 elif n==3:
     from edgescnn import edges_model, edges_img_preprocess
     x = edges_img_preprocess(x)
@@ -117,20 +128,8 @@ elif n==3:
 #split into train and test
 x_train,  x_valid, y_train, y_valid = train_test_split(x,y,test_size=0.3)
 
-# # Directory where the checkpoints will be saved
-# checkpoint_dir = './training_checkpoints'
-# # Name of the checkpoint files
-# checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt_{epoch}")
-
-# checkpoint_callback=tf.keras.callbacks.ModelCheckpoint(
-#     filepath=checkpoint_prefix,
-#     save_weights_only=True)
-
-#introducing early stopping after 3 epochs of no improvement
-callback = tf.keras.callbacks.EarlyStopping(monitor = 'loss', patience = 2)
-
 history = model.fit(x=x_train, y=y_train, batch_size=10, shuffle = True,
-                    epochs=20,validation_split=0.3, callbacks = [callback])#,  callbacks=checkpoint_callback
+                    epochs=20,validation_split=0.3)#, callbacks = [callback])#,  callbacks=checkpoint_callback
 
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
@@ -145,7 +144,7 @@ accuracy = model.evaluate(x=x_valid, y=y_valid, batch_size=2)
 predictions_validation = model.predict(x_valid)
 
 #save the model
-model.save('sio_model2')
+model.save('sio_model4')
 
 #plt.figure()
 

@@ -17,7 +17,7 @@ import pandas as pd
 n=2 #1 for nvidia cnn, 2 for sunny cnn, 3 for edges...
 
 #load model
-model = tf.keras.models.load_model('sio_model2')
+model = tf.keras.models.load_model('sio_model3')
 
 print(model.summary())
 
@@ -59,5 +59,5 @@ for index, row in speeds.iterrows():
         
 output = pd.concat([test_image_id, angles, speeds], axis = 1, sort = False)
 output.sort_values(by=['image_id'], inplace = True)
-output.to_csv('predictions_2.csv', index = False)
+#output.to_csv('predictions_3.csv', index = False)
 
