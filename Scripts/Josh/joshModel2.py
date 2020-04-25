@@ -57,30 +57,37 @@ def josh_model():
     
     n = 16
     
-    model.add(Conv2D(n, (5,5), strides = (1, 1), input_shape = (140, 320, 3), activation = 'elu'))
-    model.add(Conv2D(n, (5,5), strides = (1, 1), activation = 'elu'))
+    model.add(Conv2D(n, (5,5), strides = (1, 1), activation = 'elu', padding = 'same',
+                     input_shape = (140, 320, 3)))
+    model.add(Conv2D(n, (5,5), strides = (1, 1), activation = 'elu', padding = 'same'))
     model.add(MaxPooling2D(pool_size = (2,2)))
     model.add(Dropout(0.25))
     
-    model.add(Conv2D(2*n, (3, 3), strides = (1, 1), activation = 'elu'))
-    model.add(Conv2D(2*n, (3, 3), strides = (1, 1), activation = 'elu'))
+    model.add(Conv2D(2*n, (3, 3), strides = (1, 1), activation = 'elu', padding = 'same'))
+    model.add(Conv2D(2*n, (3, 3), strides = (1, 1), activation = 'elu', padding = 'same'))
     model.add(MaxPooling2D(pool_size = (2,2)))
     model.add(Dropout(0.25))
     
-    model.add(Conv2D(4*n, (3,3), strides = (1, 1), activation = 'elu'))
-    model.add(Conv2D(4*n, (3,3), strides = (1, 1), activation = 'elu'))
+    model.add(Conv2D(4*n, (3,3), strides = (1, 1), activation = 'elu', padding = 'same'))
+    model.add(Conv2D(4*n, (3,3), strides = (1, 1), activation = 'elu', padding = 'same'))
     model.add(MaxPooling2D(pool_size = (2,2)))
     model.add(Dropout(0.25))
     
-    model.add(Conv2D(8*n, (3,3), strides = (1, 1), activation = 'elu'))
-    model.add(Conv2D(8*n, (3,3), strides = (1, 1), activation = 'elu'))
-    model.add(Conv2D(8*n, (3,3), strides = (1, 1), activation = 'elu'))
+    model.add(Conv2D(8*n, (3,3), strides = (1, 1), activation = 'elu', padding = 'same'))
+    model.add(Conv2D(8*n, (3,3), strides = (1, 1), activation = 'elu', padding = 'same'))
+    model.add(Conv2D(8*n, (3,3), strides = (1, 1), activation = 'elu', padding = 'same'))
     model.add(MaxPooling2D(pool_size = (2,2)))
     model.add(Dropout(0.25))
     
     model.add(Conv2D(16*n, (3,3), strides = (1, 1), activation = 'elu', padding = 'same'))
     model.add(Conv2D(16*n, (3,3), strides = (1, 1), activation = 'elu', padding = 'same'))
     model.add(Conv2D(16*n, (3,3), strides = (1, 1), activation = 'elu', padding = 'same'))
+    model.add(MaxPooling2D(pool_size = (2,2)))
+    model.add(Dropout(0.25))
+    
+    model.add(Conv2D(32*n, (3,3), strides = (1, 1), activation = 'elu', padding = 'same'))
+    model.add(Conv2D(32*n, (3,3), strides = (1, 1), activation = 'elu', padding = 'same'))
+    model.add(Conv2D(32*n, (3,3), strides = (1, 1), activation = 'elu', padding = 'same'))
     model.add(MaxPooling2D(pool_size = (2,2)))
     model.add(Dropout(0.25))
     

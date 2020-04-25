@@ -33,10 +33,12 @@ def label_images(directory):
 
 
 def josh_data_generator():
-    imgGen = ImageDataGenerator(width_shift_range=30,
-                               height_shift_range=30,
-                                rescale=1./255)
-    #return imgGen.flow_from_directory(directory, batch_size= 32, target_size = (240, 320))
+    imgGen = ImageDataGenerator(width_shift_range=10,
+                               height_shift_range=10,
+                               rotation_range = 0,
+                               rescale=1./255,
+                               fill_mode = 'constant',
+                               cval = 0)
     return imgGen
     
 def test_generator():
@@ -46,19 +48,33 @@ def test_generator():
 def josh_model():
     model = Sequential(name = 'Josh_Model')
     
-    model.add(Conv2D(16, (5,5), strides = (2, 2), input_shape = (240, 320, 3), activation = 'elu'))
+    n = 16
+    
+    model.add(Conv2D(n, (5,5), strides = (1, 1), activation = 'elu', padding = 'same',
+                     input_shape = (140, 320, 3),))
     model.add(MaxPooling2D(pool_size = (2,2)))
-    model.add(Conv2D(32, (5,5), strides = (2, 2), activation = 'elu'))
+    model.add(Dropout(0.25))
+    
+    model.add(Conv2D(2 * n, (5,5), strides = (2, 2), activation = 'elu', padding = 'same'))
     model.add(MaxPooling2D(pool_size = (2,2)))
-    model.add(Conv2D(64, (3,3), strides = (1, 1), activation = 'elu'))
+    model.add(Dropout(0.25))
+    
+    model.add(Conv2D(4 * n, (3,3), strides = (1, 1), activation = 'elu', padding = 'same'))
     model.add(MaxPooling2D(pool_size = (2,2)))
-    model.add(Conv2D(128, (3,3), strides = (1, 1), activation = 'elu'))
+    model.add(Dropout(0.25))
+    
+    model.add(Conv2D(8 * n, (3,3), strides = (1, 1), activation = 'elu', padding = 'same'))
     model.add(MaxPooling2D(pool_size = (2,2)))
+    model.add(Dropout(0.25))
+    
+    model.add(Conv2D(16 * n, (3,3), strides = (1, 1), activation = 'elu', padding = 'same'))
+    model.add(MaxPooling2D(pool_size = (2,2)))
+    model.add(Dropout(0.25))
+    
     model.add(Flatten())
-    model.add(Dense(100, activation = 'elu'))
-    model.add(Dense(40, activation = 'elu'))
-    model.add(Dense(10, activation = 'elu'))
-    model.add(Dense(2))
+    model.add(Dense(500, activation = 'elu'))
+    model.add(Dense(50, activation = 'elu'))
+    model.add(Dense(1))
     
     model.compile(loss = 'mse', optimizer = Adam(lr = 0.001))
     
