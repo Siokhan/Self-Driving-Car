@@ -32,9 +32,8 @@ def sunny_model():
     model.add(MaxPool2D(pool_size=(2,2)))
     model.add(Conv2D(24, (3, 3), strides=(1, 1), activation='elu')) 
     model.add(MaxPool2D(pool_size=(2,2)))
-    
-
     model.add(Dropout(0.2))
+    
     # Fully Connected Layers
     model.add(Flatten())
     model.add(Dense(100, activation = 'elu'))

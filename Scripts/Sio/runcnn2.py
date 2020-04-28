@@ -1,8 +1,6 @@
 #####
 #this is the file to run the cnn. You have the ability to either use
-#the nvidia cnn or the sunny cnn. Thought it would be cool to be able to compare 
-#our cnn to nvidias.
-
+#the nvidia cnn or the sio cnn. 
 ###
 
 from functions import (detect_edges, detect_line_segments, plot_line_segments,
@@ -37,48 +35,48 @@ for f in file_list:
     a+=1
 
 x1=np.asarray(x1)
-print(x1.shape)
+#print(x1.shape)
 #now extract labels
 labels = np.genfromtxt('../../Data/training_norm.csv',delimiter = ',')
 
 y1 = labels[1:,1:]
-print(y1.shape)
+#print(y1.shape)
 
 data_dir2 = '../../Data/captureOVAL-28_02_2020'
 x2,y2 = extract_data(data_dir2)
 x2 = np.asarray(x2)
-print(x2.shape)
+#print(x2.shape)
 
 y2[:,0] = (y2[:,0] -50)/80
 y2[:,1] = (y2[:,1])/35
-print(y2.shape)
+#print(y2.shape)
 
 data_dir3 = '../../Data/captureOVAL2-28_02_2020'
 x3,y3 = extract_data(data_dir3)
 x3 = np.asarray(x3)
-print(x3.shape)
+#print(x3.shape)
 
 y3[:,0] = (y3[:,0] -50)/80
 y3[:,1] = (y3[:,1])/35
-print(y3.shape)
+#print(y3.shape)
 
 data_dir4 = '../../Data/captureOVAL03_03_2020'
 x4,y4 = extract_data(data_dir4)
 x4 = np.asarray(x4)
-print(x4.shape)
+#print(x4.shape)
 
 y4[:,0] = (y4[:,0] -50)/80
 y4[:,1] = (y4[:,1])/35
-print(y4.shape)
+#print(y4.shape)
 
 data_dir5 = '../../Data/human_stopped_data'
 x5,y5 = extract_data(data_dir5)
 x5 = np.asarray(x5)
-print(x5.shape)
+#print(x5.shape)
 
 y5[:,0] = (y5[:,0] -50)/80
 y5[:,1] = (y5[:,1])/35
-print(y5.shape)
+#print(y5.shape)
 
 x = np.append(x1,x2,axis = 0)
 x = np.append(x,x3,axis = 0)
@@ -113,7 +111,7 @@ if n==1: #if nvidiacnn is selected
     x = nvidia_img_preprocess(x)
     x_test = nvidia_img_preprocess(x_test)
     model = nvidia_model()
-elif n==2: #if sunnycnn is selected
+elif n==2: #if siocnn is selected
     from siocnn import sio_model, sio_img_preprocess
     x = sio_img_preprocess(x)
     x_test = sio_img_preprocess(x_test)
@@ -127,6 +125,8 @@ elif n==3:
     
 #split into train and test
 x_train,  x_valid, y_train, y_valid = train_test_split(x,y,test_size=0.3)
+
+callback = tf.keras.callbacks.EarlyStopping(monitor = 'val_loss', patience = 3)
 
 history = model.fit(x=x_train, y=y_train, batch_size=10, shuffle = True,
                     epochs=20,validation_split=0.3)#, callbacks = [callback])#,  callbacks=checkpoint_callback

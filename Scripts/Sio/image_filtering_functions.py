@@ -4,8 +4,9 @@ Created on Thu Apr 23 17:30:34 2020
 
 @author: Siokhan Kouassi
 """
-
+import cv2
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import patches
 
 #functions for image pre processing
@@ -84,3 +85,34 @@ def template_match_img(width, height, template, detected_img, result, peaks,
         fig.tight_layout()
     
     return fig
+
+#lane edge detection
+def detect_edges(frame):
+    # filter for blue lane lines
+    hsv = cv2.cvtColor(~frame, cv2.COLOR_BGR2HSV)
+    #show_image("hsv", hsv)
+    lower_black = np.array([0, 0, 0])
+    upper_black = np.array([180, 255, 230])
+    mask = cv2.inRange(hsv, lower_black, upper_black)
+    #show_image("black mask", mask)
+
+    # detect edges
+    edges = cv2.Canny(mask, 200, 400)
+
+    return edges
+
+def region_of_interest(edges):
+    height, width = edges.shape
+    mask = np.zeros_like(edges)
+
+    # only focus bottom half of the screen
+    polygon = np.array([[
+        (0, height * 1 / 2),
+        (width, height * 1 / 2),
+        (width, height),
+        (0, height),
+    ]], np.int32)
+
+    cv2.fillPoly(mask, polygon, 255)
+    cropped_edges = cv2.bitwise_and(edges, mask)
+    return cropped_edges

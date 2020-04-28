@@ -14,10 +14,10 @@ import os
 import csv
 import pandas as pd
 
-n=2 #1 for nvidia cnn, 2 for sunny cnn, 3 for edges...
+n=2 #1 for nvidia cnn, 2 for sio cnn, 3 for edges...
 
 #load model
-model = tf.keras.models.load_model('sio_model3')
+model = tf.keras.models.load_model('sio_model4')
 
 print(model.summary())
 
@@ -40,9 +40,9 @@ if n==1: #if nvidiacnn is selected
     from nvidiacnn import nvidia_img_preprocess
     #normalize data and get it ready for cnn. 
     x_test = nvidia_img_preprocess(x_test)
-elif n==2: #if sunnycnn is selected
-    from sunnycnn import sunny_img_preprocess
-    x_test = sunny_img_preprocess(x_test)
+elif n==2: #if siocnn is selected
+    from siocnn import sio_img_preprocess
+    x_test = sio_img_preprocess(x_test)
 elif n==3:
     from edgescnn import edges_img_preprocess
     x_test = edges_img_preprocess(x_test)
@@ -59,5 +59,5 @@ for index, row in speeds.iterrows():
         
 output = pd.concat([test_image_id, angles, speeds], axis = 1, sort = False)
 output.sort_values(by=['image_id'], inplace = True)
-#output.to_csv('predictions_3.csv', index = False)
+output.to_csv('predictions_4.csv', index = False)
 

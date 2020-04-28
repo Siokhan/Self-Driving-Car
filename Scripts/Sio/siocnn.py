@@ -26,20 +26,22 @@ def sio_model():
     # skipping 1st hiddel layer (nomralization layer), as we have normalized the data
     
     # Convolution Layers
-    model.add(Conv2D(24, (5, 5), strides=(2, 2), input_shape=(140, 320, 3), activation='elu')) 
+    model.add(Conv2D(32, (5, 5), strides=(2, 2), input_shape=(200, 320, 3), activation='elu')) 
+    model.add(Conv2D(64, (5, 5), strides=(2, 2), activation='elu')) 
     model.add(MaxPool2D(pool_size=(2,2)))
-    model.add(Conv2D(24, (5, 5), strides=(2, 2), activation='elu')) 
+    model.add(Conv2D(32, (3, 3), strides=(2, 2), activation='elu'))
+    model.add(Conv2D(24, (3, 3), strides=(2, 2), activation='elu'))
     model.add(MaxPool2D(pool_size=(2,2)))
-    model.add(Conv2D(24, (3, 3), strides=(1, 1), activation='elu')) 
-    model.add(MaxPool2D(pool_size=(2,2)))
-    
-
+    model.add(Conv2D(24, (2, 2), strides=(2, 2), activation='elu'))
+    model.add(MaxPool2D(pool_size=(1,1)))
     model.add(Dropout(0.2))
+    
     # Fully Connected Layers
     model.add(Flatten())
-    model.add(Dense(100, activation = 'elu'))
-    model.add(Dense(50, activation='elu'))
-    model.add(Dense(10, activation='elu'))
+    model.add(Dense(128, activation = 'relu'))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dropout(0.3))
+    model.add(Dense(10, activation='softmax'))
     
     # output layer: return angle (from 45-135, 90 is straight, <90 turn left, >90 turn right)
     model.add(Dense(2)) 
@@ -54,9 +56,16 @@ def sio_model():
 
 #from looking at the images i decided to crop top 100 pixels and normalize. 
 def sio_img_preprocess(imagearray):
-    imagearray=imagearray[:,100:,:,:] #crop top 100 pixels. 
-    imagearray = imagearray/255 #normalize. 
-    return imagearray
+    newimagearray=np.zeros((len(imagearray),200,320,3))
+    for i in range(len(imagearray)):
+        image=imagearray[i,:,:,:]
+        height, _, _ = image.shape
+        image = image[int(height/6):,:,:]  # remove top half of the image, as it is not relevant for lane following
+        #image = cv2.cvtColor(image, cv2.COLOR_RGB2YUV)  # Nvidia model said it is best to use YUV color space
+        #image = cv2.GaussianBlur(image, (3,3), 0)
+        image = image / 255 # normalizing
+        newimagearray[i,:,:,:]=image
+    return newimagearray
 
 
 model = sio_model()
