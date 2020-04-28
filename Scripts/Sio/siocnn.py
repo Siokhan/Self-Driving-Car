@@ -16,6 +16,7 @@ from tensorflow.keras.optimizers import Adam
 import cv2
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+import image_filtering_functions as pre
 
 
 #my experimental cnn model. 
@@ -60,6 +61,8 @@ def sio_img_preprocess(imagearray):
     for i in range(len(imagearray)):
         image=imagearray[i,:,:,:]
         height, _, _ = image.shape
+        lane_lines = pre.detect_lane(image)
+        image = pre.display_lines(image, lane_lines)
         image = image[int(height/6):,:,:]  # remove top half of the image, as it is not relevant for lane following
         #image = cv2.cvtColor(image, cv2.COLOR_RGB2YUV)  # Nvidia model said it is best to use YUV color space
         #image = cv2.GaussianBlur(image, (3,3), 0)
