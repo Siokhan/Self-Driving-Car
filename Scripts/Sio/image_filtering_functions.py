@@ -101,12 +101,17 @@ def make_points(frame, line):
 
 #### lane edge detection ####
 def detect_edges(frame):
-    # filter for blue lane lines, invert the pixel values as it seems 
-    # to facilitate the process
+    #filter for black lane markings
+    #first increase contrast in order to filter out noise
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    frame = cv2.equalizeHist(frame)
+    frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
+    #invert pixels as it facilitates detection
     hsv = cv2.cvtColor(~frame, cv2.COLOR_BGR2HSV)
     #show_image("hsv", hsv)
-    lower_black = np.array([0, 0, 0])
-    upper_black = np.array([180, 255, 250])
+    #image is inverted so filter out white instead of black
+    lower_black = np.array([0, 0, 253])
+    upper_black = np.array([180, 255, 255])
     mask = cv2.inRange(hsv, lower_black, upper_black)
     #show_image("black mask", mask)
 
