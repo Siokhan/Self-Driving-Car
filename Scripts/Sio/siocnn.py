@@ -62,6 +62,8 @@ def sio_img_preprocess(imagearray):
         image=imagearray[i,:,:,:]
         height, _, _ = image.shape
         lane_lines = pre.detect_lane(image)
+        steering_angle = pre.compute_steering_angle(image, lane_lines)
+        image = pre.display_heading_line(image, steering_angle)
         image = pre.display_lines(image, lane_lines)
         image = image[int(height/6):,:,:]  # remove top half of the image, as it is not relevant for lane following
         #image = cv2.cvtColor(image, cv2.COLOR_RGB2YUV)  # Nvidia model said it is best to use YUV color space
