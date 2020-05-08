@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import logging
 import math
-from matplotlib import patches
 
 #functions for image pre processing
 
@@ -101,6 +100,7 @@ def make_points(frame, line):
     return [[x1, y1, x2, y2]]
 
 #### lane edge detection ####
+## adapted from: https://towardsdatascience.com/deeppicar-part-4-lane-following-via-opencv-737dd9e47c96
 def detect_edges(frame):
     #filter for black lane markings
     #first increase contrast in order to filter out noise
@@ -114,7 +114,6 @@ def detect_edges(frame):
     lower_black = np.array([0, 0, 253])
     upper_black = np.array([180, 255, 255])
     mask = cv2.inRange(hsv, lower_black, upper_black)
-    #show_image("black mask", mask)
 
     # detect edges
     edges = cv2.Canny(mask, 200, 400)
@@ -201,14 +200,10 @@ def detect_lane(frame):
     line_segments = detect_line_segments(cropped_edges)
     lane_lines = average_slope_intercept(frame, line_segments)
     
-    
-    
     return lane_lines
 
 def compute_steering_angle(frame, lane_lines):
-    """ Find the steering angle based on lane line coordinate
-        We assume that camera is calibrated to point to dead center
-    """
+
     if len(lane_lines) == 0:
         logging.info('No lane lines detected, do nothing')
         return -90
@@ -235,6 +230,7 @@ def compute_steering_angle(frame, lane_lines):
     logging.debug('new steering angle: %s' % steering_angle)
     return steering_angle
 
+#display lane lines on either side of the track
 def display_lines(frame, lines, line_color=(239, 245, 66), line_width=4):
     line_image = np.zeros_like(frame)
     if lines is not None:
@@ -244,6 +240,7 @@ def display_lines(frame, lines, line_color=(239, 245, 66), line_width=4):
     line_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
     return line_image
 
+#display middle line, essentially the trajecttory the car should , hence takes current optimal steering angle as arguments
 def display_heading_line(frame, steering_angle, line_color=(0, 255, 255), line_width=5, ):
     heading_image = np.zeros_like(frame)
     height, width, _ = frame.shape
@@ -266,4 +263,3 @@ def display_heading_line(frame, steering_angle, line_color=(0, 255, 255), line_w
     heading_image = cv2.addWeighted(frame, 0.8, heading_image, 1, 1)
 
     return heading_image
-

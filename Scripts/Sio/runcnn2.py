@@ -16,7 +16,7 @@ import pandas as pd
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 
-n=2 #1 for nvidia cnn, 2 for sio cnn, 3 for edges...
+n=3 #1 for nvidia cnn, 2 for sio cnn, 3 for speed model
 
 #keras.models.load_model('model1.hf')
 
@@ -79,57 +79,45 @@ y5[:,1] = (y5[:,1])/35
 #print(y5.shape)
 
 x = np.append(x1,x2,axis = 0)
-x = np.append(x,x3,axis = 0)
+#x = np.append(x,x3,axis = 0)
 x = np.append(x,x4,axis = 0)
 x = np.append(x,x5,axis = 0)
 print(x.shape)
 
 y = np.append(y1,y2,axis=0)
-y = np.append(y,y3,axis=0)
+#y = np.append(y,y3,axis=0)
 y = np.append(y,y4,axis=0)
 y = np.append(y,y5,axis=0)
 print(y.shape)
+y_angles = y[:,0]
+y_speeds = y[:,1]
+    
 
-#extract test data
-test_data_dir = '../../Data/test_data/test_data'
-test_file_list = np.asarray(os.listdir(test_data_dir))
-b = 0
-x_test = []
-test_image_id = []
-for f in test_file_list:
-    frame = cv2.imread(test_data_dir + '/' + f)
-    x_test.append(frame)
-    test_image_id.append(f.split('.')[0])
-    #print(b)
-    b+=1
-
-x_test = np.asarray(x_test)
 
 if n==1: #if nvidiacnn is selected
     from nvidiacnn import nvidia_model, nvidia_img_preprocess
     #normalize data and get it ready for cnn. 
     x = nvidia_img_preprocess(x)
-    x_test = nvidia_img_preprocess(x_test)
     model = nvidia_model()
+    #split into train and test
+    x_train,  x_valid, y_train, y_valid = train_test_split(x,y,test_size=0.3)
 elif n==2: #if siocnn is selected
     from siocnn import sio_model, sio_img_preprocess
     x = sio_img_preprocess(x)
-    x_test = sio_img_preprocess(x_test)
     model = sio_model()
-elif n==3:
-    from edgescnn import edges_model, edges_img_preprocess
-    x = edges_img_preprocess(x)
-    x_test = edges_img_preprocess(x_test)
-    model = edges_model()
-    
-    
-#split into train and test
-x_train,  x_valid, y_train, y_valid = train_test_split(x,y,test_size=0.3)
+    #split into train and test
+    x_train,  x_valid, y_train, y_valid = train_test_split(x,y,test_size=0.3)
+elif n==3: #speed model
+    from siospeedcnn import sio_model_speed, sio_img_preprocess_speed
+    x = sio_img_preprocess_speed(x)
+    model = sio_model_speed()
+    #split into train and test
+    x_train,  x_valid, y_train, y_valid = train_test_split(x,y_speeds,test_size=0.3)
 
-callback = tf.keras.callbacks.EarlyStopping(monitor = 'val_loss', patience = 3)
+callback = tf.keras.callbacks.EarlyStopping(monitor = 'val_loss', patience = 5)
 
 history = model.fit(x=x_train, y=y_train, batch_size=10, shuffle = True,
-                    epochs=20,validation_split=0.3)#, callbacks = [callback])#,  callbacks=checkpoint_callback
+                    epochs=20,validation_split=0.3)#, callbacks = [callback])
 
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
@@ -144,7 +132,7 @@ accuracy = model.evaluate(x=x_valid, y=y_valid, batch_size=2)
 predictions_validation = model.predict(x_valid)
 
 #save the model
-model.save('sio_model4')
+model.save('sio_model_testing')
 
 #plt.figure()
 

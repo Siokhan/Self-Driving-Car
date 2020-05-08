@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat May  2 16:06:11 2020
+
+@author: Siokhan Kouassi
+"""
+
 import os
 import random
 import fnmatch
@@ -20,40 +27,26 @@ import image_filtering_functions as pre
 
 
 #my experimental cnn model. 
-def sio_model():
-    model = Sequential(name='Sio_model')
+def sio_model_speed():
+    model = Sequential(name='Sio_model_speed')
     
-    # elu=Expenential Linear Unit, similar to leaky Relu
-    # skipping 1st hiddel layer (nomralization layer), as we have normalized the data
-    
-    # Convolution Layers
-    model.add(Conv2D(24, (5, 5), strides=(2, 2), input_shape=(200, 320, 3), activation='elu', padding = 'same')) 
-    model.add(MaxPool2D(pool_size=(2,2)))
-    model.add(Conv2D(24, (5, 5), strides=(2, 2), activation='elu', padding = 'same')) 
-    model.add(MaxPool2D(pool_size=(2,2)))
-    model.add(Conv2D(24, (3, 3), strides=(1, 1), activation='elu', padding = 'same')) 
-    model.add(MaxPool2D(pool_size=(2,2)))
-    model.add(Dropout(0.2))
-    
-    # Fully Connected Layers
-    model.add(Flatten())
-    model.add(Dense(100, activation = 'elu'))
+    model.add(Dense(100, input_dim=(200, 320, 3), activation = 'elu'))
     model.add(Dense(50, activation='elu'))
     model.add(Dense(10, activation='elu'))
-    #model.add(Dropout(0.2))
-    # output layer: return angle (from 45-135, 90 is straight, <90 turn left, >90 turn right)
-    model.add(Dense(2))
+    
+    # output layer: return speed
+    model.add(Dense(1, activation='softmax'))
     
     # since this is a regression problem not classification problem,
     # we use MSE (Mean Squared Error) as loss function
     optimizer = Adam(lr=1e-4) # lr is learning rate
-    model.compile(loss='mse', optimizer=optimizer)
+    model.compile(loss='binary_crossentropy', optimizer=optimizer)
     
     return model
 
 
 #from looking at the images i decided to crop top 100 pixels and normalize. 
-def sio_img_preprocess(imagearray):
+def sio_img_preprocess_speed(imagearray):
     newimagearray=np.zeros((len(imagearray),200,320,3))
     for i in range(len(imagearray)):
         image=imagearray[i,:,:,:]
@@ -70,5 +63,5 @@ def sio_img_preprocess(imagearray):
     return newimagearray
 
 
-model = sio_model()
+model = sio_model_speed()
 print(model.summary())
